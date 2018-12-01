@@ -1,5 +1,11 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem 'rspec'
-gem 'sqlite3'
+gem 'postgresql'
+gem 'pry'
+gem 'rake'
+gem 'rubocop', require: false
 gem 'sequel'
+
+group :test do
+  gem 'rspec'
+end
