@@ -1,3 +1,6 @@
+require 'standalone_migrations'
+StandaloneMigrations::Tasks.load_tasks
+
 require 'sequel'
 require 'pg'
 require './lib/connection_util'

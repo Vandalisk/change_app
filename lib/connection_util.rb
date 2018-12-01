@@ -1,5 +1,4 @@
 require 'yaml'
-require 'pry'
 require 'erb'
 
 # Util for database connection
@@ -7,7 +6,7 @@ require 'erb'
 class ConnectionUtil
   class << self
     def db_config
-      file = ERB.new(File.read('config/database.yml')).result
+      file = ERB.new(File.read('db/config.yml')).result
 
       YAML.safe_load(file, [], [], true)
     end
