@@ -1,3 +1,6 @@
+require 'sequel'
+require './lib/connection_util'
+
 # change giving class
 #
 class Change
