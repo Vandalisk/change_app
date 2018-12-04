@@ -26,6 +26,15 @@ namespace :db do
     end
   end
 
+  desc 'seed'
+  task :seed do
+    coins_table = Sequel.connect(db_config['development'])[:coins]
+
+    [50, 25, 10, 5, 2, 1].each do |value|
+      coins_table.insert(value: value, count: 0)
+    end
+  end
+
   def db_config
     @db_config ||= ConnectionUtil.db_config
   end

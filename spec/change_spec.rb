@@ -3,21 +3,21 @@ require 'sequel'
 require './lib/connection_util'
 
 RSpec.describe Change do
-  context 'should return right change' do
-    let(:db_config) { ConnectionUtil.db_config }
-    let!(:con) { Sequel.connect(db_config['test']) }
+  let(:db_config) { ConnectionUtil.db_config }
+  let!(:con) { Sequel.connect(db_config['test']) }
 
-    subject { described_class.new('test') }
+  subject { described_class.new('test') }
 
-    let(:coins_table) { con[:coins] }
-    let(:fixture) { { 50 => 2, 25 => 8, 10 => 14, 5 => 11, 2 => 3, 1 => 1 } }
+  let(:coins_table) { con[:coins] }
+  let(:fixture) { { 50 => 2, 25 => 8, 10 => 14, 5 => 11, 2 => 3, 1 => 1 } }
 
-    let(:coins) do
-      fixture.each_with_object([]) do |(coin, count), object|
-        object.push(value: coin, count: count)
-      end
+  let(:coins) do
+    fixture.each_with_object([]) do |(coin, count), object|
+      object.push(value: coin, count: count)
     end
+  end
 
+  context 'should return right change' do
     before do
       coins_table.delete
 
