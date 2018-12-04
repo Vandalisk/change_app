@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+
+require './lib/change'
+require './lib/console_helper'
+
+cash_machine = Change.new
+
+def change(cash_machine, param)
+  coins = cash_machine.get_change(param)
+
+  puts "Change: #{coins}"
+rescue StandardError => error
+  puts error
+
+  puts 'Please add coins or try again later'
+
+  puts
+end
+
+def put_coins(cash_machine, params)
+  coins_input = ConsoleHelper.prepare_coins_input(params)
+
+  coins_count = coins_input.each_with_object(Hash.new(0)) do |element, hash|
+    hash[element] += 1
+  end
+
+  coins = coins_count.map { |value, count| { value: value, count: count } }
+
+  result = cash_machine.put_coins(coins)
+
+  puts "Added #{result}"
+end
+
+loop do
+  puts 'help - to see list of available commands'
+  puts 'exit - to exit program'
+  puts
+
+  input = gets.chomp
+  command, *params = input.split /\s/
+
+  case command
+  when /\Ahelp\z/i
+    puts ConsoleHelper.help_text
+  when /\Aputs\z/i
+    if params.size > 1 || params.size.zero?
+      puts 'Wrong size of params. Please see correct format from help command'
+    else
+      put_coins(cash_machine, params)
+    end
+  when /\Achange\z/i
+    param = params.first.to_i
+
+    change(cash_machine, param)
+  when /\Aexit/i
+    exit
+  else puts 'Invalid command'
+  end
+end
