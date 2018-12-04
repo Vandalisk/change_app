@@ -7,6 +7,7 @@ gem 'rake'
 gem 'rubocop', require: false
 gem 'sequel'
 gem 'standalone_migrations'
+gem 'interactor'
 
 group :test do
   gem 'rspec'
