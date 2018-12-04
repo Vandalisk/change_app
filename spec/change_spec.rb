@@ -1,7 +1,6 @@
 require 'change'
 require 'sequel'
 require './lib/connection_util'
-require 'pry'
 
 RSpec.describe Change do
   context 'should return right change' do
@@ -19,22 +18,27 @@ RSpec.describe Change do
       end
     end
 
-    before { coins_table.delete }
+    before do
+      coins_table.delete
+
+      fixture.keys.each { |value| coins_table.insert(value: value, count: 0) }
+    end
+
     after { coins_table.delete }
 
     it 'change recipe' do
       subject.put_coins(coins)
 
-      expect(subject.get_odd(2)).to eq([50, 50, 25, 25, 25, 25])
-      expect(subject.get_odd(2)).to eq(
+      expect(subject.get_change(2)).to eq([50, 50, 25, 25, 25, 25])
+      expect(subject.get_change(2)).to eq(
         [25, 25, 25, 25, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
       )
 
-      expect(subject.get_odd(1)).to eq(
+      expect(subject.get_change(1)).to eq(
         [10, 10, 10, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 2, 2, 1]
       )
 
-      expect { subject.get_odd(2) }.to raise_error(StandardError)
+      expect { subject.get_change(2) }.to raise_error(StandardError)
     end
   end
 end

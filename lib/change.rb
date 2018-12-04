@@ -1,5 +1,7 @@
 require 'sequel'
 require './lib/connection_util'
+require './lib/interactors/get_change'
+require './lib/interactors/put_coins'
 
 # change giving class
 #
@@ -11,40 +13,24 @@ class Change
   end
 
   def put_coins(coins)
-    coins.each { |coin| coins_table.insert(coin) }
+    PutCoins.call(coins_table: coins_table, coins: coins)
   end
 
-  def get_odd(sum)
-    sum *= 100
-    balance = sum
+  def get_change(input)
+    interactor = GetChange.call(input: input, coins_table: coins_table)
 
-    result = []
-
-    [50, 25, 10, 5, 2, 1].each do |cash_value|
-      coins_by_value = coins_table.where(value: cash_value)
-      total_amount = coins_by_value.limit(1).first[:count]
-
-      unit = balance / cash_value
-
-      if total_amount >= unit
-        coins_by_value.update(count: total_amount - unit)
-
-        balance -= unit * cash_value
-
-        result.push(*Array.new(unit) { cash_value })
-      elsif total_amount < unit
-        coins_by_value.update(count: 0)
-
-        balance -= total_amount * cash_value
-
-        result.push(*Array.new(total_amount) { cash_value })
-      end
-
-      break if balance.zero?
+    unless interactor.balance.zero?
+      raise StandardError, 'Not enough coins to give odd'
     end
 
-    raise StandardError, 'Not enough coins to give odd' unless balance.zero?
+    make_transactions(interactor.transactions)
 
-    result
+    interactor.result
+  end
+
+  def make_transactions(transactions)
+    transactions.each do |transaction|
+      transaction[:table].update(count: transaction[:count])
+    end
   end
 end
