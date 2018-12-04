@@ -8,10 +8,8 @@ class ConsoleHelper
         help - to see list of available commands
 
         puts [array or file_path] - to add coins into machine
-             option -f - for file
           example:
             puts [50,50,50,10,2,2,1]
-            puts -f 'spec/fixtures/file.yaml'
 
         change [number] - to get change from cash machine
           example:
